@@ -2,6 +2,8 @@
 % ifuptex.sty  (for both LaTeX2e & plain TeX)
 %
 
+% At present, ifuptex is merely an alias to ifptex.
+
 %% Avoid multiple loading
 \csname\if11bxipIfuptexLoaded\fi\endcsname
 \def\bxipIfuptexLoaded{\endinput}
@@ -11,8 +13,8 @@
 \input\if11ifptex.sty\fi\relax
 \else
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ifuptex}[2011/03/01 v0.9 upTeX checker]
-\RequirePackage{ifptex}[2011/03/01]
+\ProvidesPackage{ifuptex}[2013/04/29 v1.0 upTeX checker]
+\RequirePackage{ifptex}[2013/04/29]
 \fi
 
 %% all done
