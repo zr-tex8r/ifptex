@@ -1,0 +1,193 @@
+%
+% ifuptex.sty  (for both LaTeX2e & plain TeX)
+%
+
+%% Avoid multiple loading
+\csname\if11bxipIfptexLoaded\fi\endcsname
+\edef\x{%
+\catcode32=\the\catcode32%
+\catcode64=\the\catcode64%
+\catcode33=\the\catcode33%
+\catcode35=\the\catcode35%
+\catcode42=\the\catcode42%
+\catcode60=\the\catcode60%
+\catcode62=\the\catcode62%
+\catcode91=\the\catcode91%
+\catcode93=\the\catcode93%
+\relax}
+\catcode32=10 %< >
+\catcode64=11 %<@>
+\catcode33=11 %<">
+\catcode35=6  %<#>
+\catcode42=12 %<*>
+\catcode60=12 %<<>
+\catcode62=12 %<>>
+\catcode91=12 %<[>
+\catcode93=12 %<]>
+\let\bxip@restore@cc\x
+\edef\bxip@restore@cc{\bxip@restore@cc
+  \noexpand\let\noexpand\bxip@restore@cc\relax}
+\def\bxipIfptexLoaded{\endinput}
+
+%% Check if LaTeX2e is used.
+\ifx\RequirePackage\@undefined  %<*!LaTeX2e>
+  \let\bxip@latex=f
+\else                           %<*LaTeX2e>
+  \let\bxip@latex=t
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{ifptex}[2012/08/19 v0.9b pTeX checker]
+\fi                             %</LaTeX2e>
+
+%% internal stuffs
+\if t\bxip@latex    %<*LaTeX2e>
+  \def\bxip@pream@def#1{%
+    \@onlypreamble#1\def#1%
+  }
+\else               %<*!LaTeX2e>
+  \def\bxip@pream@def{\def}
+\fi                 %</LaTeX2e>
+\def\bxip@true#1{%
+  \expandafter\let\csname#1\endcsname\iftrue}
+\def\bxip@false#1{%
+  \expandafter\let\csname#1\endcsname\iffalse}
+\bxip@false{ifbxip@ok}
+\def\bxip@test#1{%
+  \edef\bxip@tmpa{\string#1}%
+  \edef\bxip@tmpb{\meaning#1}%
+  \ifx\bxip@tmpa\bxip@tmpb \bxip@true{ifbxip@ok}%
+  \else \bxip@false{ifbxip@ok}%
+  \fi}
+\bxip@pream@def\bxip@with@default#1#2{%
+  \def\bxip@tmpa{#2}%
+  \def\bxip@tmpb{#2[#1]}%
+  \futurelet\bxip@tok\bxip@with@default@a}
+\bxip@pream@def\bxip@with@default@a{%
+  \ifx[\bxip@tok%]
+    \expandafter\bxip@tmpa
+  \else \expandafter\bxip@tmpb
+  \fi}
+
+%% error message
+\if t\bxip@latex    %<*LaTeX2e>
+  \providecommand*\bxModuleName{\@currname}
+  \bxip@pream@def\bxip@error#1{%
+    \PackageError{\bxModuleName}{#1}%
+     {Loading is aborted here. \@ehc}%
+    \aftergroup\endinput}
+  \bxip@pream@def\bxip@msg@req#1{%
+    This \@cls@pkg\space requires #1}
+\else               %<*!LaTeX2e>
+  \def\bxip@error#1{%
+    \errorcontextlines=-1
+    \errhelp{You should quit right now.}%
+    \errmessage{#1}}
+  \def\bxip@msg@req#1{%
+    This document requires #1!}
+\fi                 %</LaTeX2e>
+
+%%<+> \ifpTeX
+\bxip@test\kanjiskip
+\ifbxip@ok \bxip@true{ifpTeX}
+\else \bxip@false{ifpTeX}
+\fi
+
+%%<+> \ifupTeX
+%%<+> \ifnativeupTeX
+%%<+> \ifnewupTeX
+\mathchardef\upTeXguessedversion=0
+% if \ucs exists, then gv >= 1
+\bxip@test\ucs
+\ifbxip@ok
+  \mathchardef\upTeXguessedversion=1
+  % if \enablecjktoken exists, then gv >= 6
+  \bxip@test\enablecjktoken
+  \ifbxip@ok
+    \mathchardef\upTeXguessedversion=6
+    % if \kchar exists, then gv >= 10
+    \bxip@test\kchar
+    \ifbxip@ok
+      \mathchardef\upTeXguessedversion=10
+      % if \forcecjktoken exists, then gv >= 19
+      \bxip@test\forcecjktoken
+      \ifbxip@ok
+        \mathchardef\upTeXguessedversion=19
+      \fi
+    \fi
+  \fi
+\fi
+\ifnum\upTeXguessedversion>0
+  \bxip@true{ifupTeX}
+  % native-ness check
+  \ifnum\ucs"3000="3000 \bxip@true{ifnativeupTeX}
+  \else \bxip@false{ifnativeupTeX}
+  \fi
+\else
+  \bxip@false{ifupTeX}
+  \bxip@false{ifnativeupTeX}
+\fi
+
+%%<+> \RequirepTeX
+%%<+> \RequireupTeX
+%%<+> \RequireNativeupTeX
+%%<+> \RequireNewupTeX
+\def\bxip@new@upTeX@version{0.19}
+\bxip@pream@def\RequirepTeX{%
+  \begingroup
+    \ifpTeX\else
+      \bxip@error{\bxip@msg@req{pTeX}}%
+    \fi
+  \endgroup}
+\bxip@pream@def\RequireupTeX{%
+  \begingroup
+    \ifupTeX\else
+      \bxip@error{\bxip@msg@req{upTeX}}%
+    \fi
+  \endgroup}
+\bxip@pream@def\RequireNativeupTeX{%
+  \begingroup
+    \ifnativeupTeX\else
+      \bxip@error{\bxip@msg@req{upTeX in Unicode}}%
+    \fi
+  \endgroup}
+\bxip@pream@def\RequirenativeupTeX{\RequireNativeupTeX}
+\bxip@pream@def\RequireNewupTeX{%
+  \bxip@with@default\bxip@new@upTeX@version
+   \bxip@require@new@uptex@a}
+\bxip@pream@def\bxip@require@new@uptex@a[#1]{%
+  \begingroup
+    \ifupTeX
+      \bxip@require@new@uptex@b\upTeXguessedversion{#1}{upTeX}%
+    \else \bxip@error{\bxip@msg@req{upTeX}}%
+    \fi
+  \endgroup}
+\bxip@pream@def\RequireNativeNewupTeX{%
+  \bxip@with@default\bxip@new@upTeX@version
+   \bxip@require@native@new@uptex@a}
+\bxip@pream@def\bxip@require@native@new@uptex@a[#1]{%
+  \begingroup
+    \ifnativeupTeX
+      \bxip@require@new@uptex@b\upTeXguessedversion{#1}{upTeX}%
+    \else \bxip@error{\bxip@msg@req{upTeX in Unicode}}%
+    \fi
+  \endgroup}
+\dimendef\bxip@dim=0
+\countdef\bxip@num=255
+\bxip@pream@def\bxip@require@new@uptex@b#1#2#3{%
+  \bxip@dim=#2pt \bxip@num\bxip@dim
+  \advance\bxip@num328 \divide\bxip@num 655
+  \ifnum#1<\bxip@num
+    \bxip@error{\bxip@msg@req{#3 v.>=#2}}%
+  \fi}
+
+%% clean up
+\let\bxip@latex\@undefined
+\let\bxip@true\@undefined
+\let\bxip@false\@undefined
+\let\bxip@test\@undefined
+\let\bxip@tmpa\@undefined
+\let\bxip@tmpb\@undefined
+
+%% all done
+\bxip@restore@cc
+\endinput
+%% EOF

@@ -1,0 +1,20 @@
+%
+% ifuptex.sty  (for both LaTeX2e & plain TeX)
+%
+
+%% Avoid multiple loading
+\csname\if11bxipIfuptexLoaded\fi\endcsname
+\def\bxipIfuptexLoaded{\endinput}
+
+%% load ifptex
+\ifx\RequirePackage\undefined
+\input\if11ifptex.sty\fi\relax
+\else
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ifuptex}[2011/03/01 v0.9 upTeX checker]
+\RequirePackage{ifptex}[2011/03/01]
+\fi
+
+%% all done
+\endinput
+%% EOF
