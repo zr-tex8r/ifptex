@@ -1,22 +1,54 @@
+%%
+%% This is file 'ifuptex.sty'.
+%% 
+%% Copyright (c) 2017 Takayuki YATO (aka. "ZR")
+%%   GitHub:   https://github.com/zr-tex8r
+%%   Twitter:  @zr_tex8r
+%%
+%% This package is distributed under the MIT License.
+%%
 %
-% ifuptex.sty  (for both LaTeX2e & plain TeX)
+% NOTE: Now ifuptex is merely an alias to ifptex.
 %
-
-% At present, ifuptex is merely an alias to ifptex.
-
-%% Avoid multiple loading
+%% avoid multiple loading
 \csname\if11bxipIfuptexLoaded\fi\endcsname
+%% code guards
+\edef\x{%
+\catcode32=\the\catcode32%
+\catcode45=\the\catcode45%
+\catcode46=\the\catcode46%
+\catcode47=\the\catcode47%
+\catcode58=\the\catcode58%
+\catcode64=\the\catcode64%
+\relax}
+\catcode32=10\relax
+\catcode45=12 % <->
+\catcode46=12 % <.>
+\catcode47=12 % </>
+\catcode58=12 % <:>
+\catcode64=11 % <@>
+\edef\bxip@up@restore@codes{\x
+  \noexpand\let\noexpand\bxip@up@restore@codes\relax}
 \def\bxipIfuptexLoaded{\endinput}
 
-%% load ifptex
-\ifx\RequirePackage\undefined
-\input\if11ifptex.sty\fi\relax
-\else
-\NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ifuptex}[2013/04/29 v1.0 upTeX checker]
-\RequirePackage{ifptex}[2013/04/29]
+%% check for LaTeX
+\ifx\RequirePackage\@undefined % non-LaTeX
+  \long\def\x#1\ProvidesPackage#2[#3]{%
+    \def\x\RequirePackage##1[##2]{\input ##1.sty\relax}%
+    \immediate\write-1{Package: #2 #3}}
+  \expandafter\x
+\else % LaTeX
+  \let\x\relax
 \fi
 
+%% package declaration
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ifuptex}[2017/05/04 v1.1-pre upTeX checker]
+
+%% load ifptex
+\x\RequirePackage{ifptex}[2017/05/04]
+
 %% all done
+\bxip@up@restore@codes
 \endinput
 %% EOF

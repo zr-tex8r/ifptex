@@ -1,193 +1,222 @@
+%%
+%% This is file 'ifptex.sty'.
+%% 
+%% Copyright (c) 2017 Takayuki YATO (aka. "ZR")
+%%   GitHub:   https://github.com/zr-tex8r
+%%   Twitter:  @zr_tex8r
+%%
+%% This package is distributed under the MIT License.
+%%
 %
-% ifuptex.sty  (for both LaTeX2e & plain TeX)
-%
-
-%% Avoid multiple loading
+%% avoid multiple loading
 \csname\if11bxipIfptexLoaded\fi\endcsname
+%% code guards
 \edef\x{%
 \catcode32=\the\catcode32%
-\catcode64=\the\catcode64%
 \catcode33=\the\catcode33%
 \catcode35=\the\catcode35%
 \catcode42=\the\catcode42%
 \catcode60=\the\catcode60%
 \catcode62=\the\catcode62%
+\catcode64=\the\catcode64%
 \catcode91=\the\catcode91%
 \catcode93=\the\catcode93%
 \relax}
-\catcode32=10 %< >
-\catcode64=11 %<@>
+\catcode32=10\relax
 \catcode33=11 %<">
 \catcode35=6  %<#>
 \catcode42=12 %<*>
 \catcode60=12 %<<>
 \catcode62=12 %<>>
+\catcode64=11 %<@>
 \catcode91=12 %<[>
 \catcode93=12 %<]>
-\let\bxip@restore@cc\x
-\edef\bxip@restore@cc{\bxip@restore@cc
-  \noexpand\let\noexpand\bxip@restore@cc\relax}
+\edef\bxip@restore@codes{\x
+  \noexpand\let\noexpand\bxip@restore@codes\relax}
 \def\bxipIfptexLoaded{\endinput}
 
-%% Check if LaTeX2e is used.
-\ifx\RequirePackage\@undefined  %<*!LaTeX2e>
+%% check for LaTeX
+\ifx\RequirePackage\@undefined %<*!LaTeX>
   \let\bxip@latex=f
-\else                           %<*LaTeX2e>
-  \let\bxip@latex=t
-  \NeedsTeXFormat{LaTeX2e}
-  \ProvidesPackage{ifptex}[2013/04/29 v1.0 pTeX checker]
-\fi                             %</LaTeX2e>
+  \long\def\x#1\ProvidesPackage#2[#3]{%
+    \immediate\write-1{Package: #2 #3}}
+  \expandafter\x
+\else                          %<*LaTeX>
+  \let\bxip@latex=t \let\x\relax
+\fi                            %</LaTeX>
 
-%% internal stuffs
-\if t\bxip@latex    %<*LaTeX2e>
-  \def\bxip@pream@def#1{%
-    \@onlypreamble#1\def#1%
-  }
-\else               %<*!LaTeX2e>
-  \def\bxip@pream@def{\def}
-\fi                 %</LaTeX2e>
+%% package declaration
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ifptex}[2017/05/04 v1.1-pre pTeX checker]
+
+%% enter the big group
+\begingroup
+
+%--------------------------------------- helpers
+
+%% \bxip@csletcs{<csnameA>}{<csnameB>}
+\def\bxip@csletcs#1#2{%
+  \expandafter\let\csname#1\expandafter\endcsname\csname#2\endcsname}
+%% \bxip@true{<csname>}
 \def\bxip@true#1{%
   \expandafter\let\csname#1\endcsname\iftrue}
+%% \bxip@false{<csname>}
 \def\bxip@false#1{%
   \expandafter\let\csname#1\endcsname\iffalse}
+
+%% switches
 \bxip@false{ifbxip@ok}
-\def\bxip@test#1{%
-  \edef\bxip@tmpa{\string#1}%
-  \edef\bxip@tmpb{\meaning#1}%
+
+%% \bxip@test@primitive\CS
+\def\bxip@test@primitive#1{%
+  \edef\bxip@tmpa{\string#1}\edef\bxip@tmpb{\meaning#1}%
   \ifx\bxip@tmpa\bxip@tmpb \bxip@true{ifbxip@ok}%
   \else \bxip@false{ifbxip@ok}%
   \fi}
-\bxip@pream@def\bxip@with@default#1#2{%
-  \def\bxip@tmpa{#2}%
-  \def\bxip@tmpb{#2[#1]}%
+
+%% \bxip@with@default{<arg>}\CS
+\gdef\bxip@with@default#1#2{%
+  \def\bxip@tmpa{#2}\def\bxip@tmpb{#2[#1]}%
   \futurelet\bxip@tok\bxip@with@default@a}
-\bxip@pream@def\bxip@with@default@a{%
-  \ifx[\bxip@tok%]
-    \expandafter\bxip@tmpa
+\gdef\bxip@with@default@a{%
+  \ifx[\bxip@tok\expandafter\bxip@tmpa%]
   \else \expandafter\bxip@tmpb
   \fi}
 
-%% error message
-\if t\bxip@latex    %<*LaTeX2e>
-  \providecommand*\bxModuleName{\@currname}
-  \bxip@pream@def\bxip@error#1{%
-    \PackageError{\bxModuleName}{#1}%
-     {Loading is aborted here. \@ehc}%
-    \aftergroup\endinput}
-  \bxip@pream@def\bxip@msg@req#1{%
-    This \@cls@pkg\space requires #1}
-\else               %<*!LaTeX2e>
-  \def\bxip@error#1{%
-    \errorcontextlines=-1
-    \errhelp{You should quit right now.}%
-    \errmessage{#1}}
-  \def\bxip@msg@req#1{%
-    This document requires #1!}
-\fi                 %</LaTeX2e>
+%% \bxip@check@version{<current>}{<required>}{<label>}
+\global\countdef\bxip@cnta=255
+\gdef\bxip@check@version#1#2#3{%
+  \ifnum#1<#2\relax
+    \begingroup
+      \bxip@cnta=#2\relax \advance\bxip@cnta100000\relax
+      \expandafter\bxip@check@version@a\the\bxip@cnta\relax{#3}%
+    \endgroup
+  \fi}
+\gdef\bxip@check@version@a#1#2#3#4#5#6\relax#7{%
+  \bxip@err@required{#7 v.>=\number#2#3#4.#5#6}}
 
-%%<+> \ifpTeX
-\bxip@test\kanjiskip
-\ifbxip@ok \bxip@true{ifpTeX}
-\else \bxip@false{ifpTeX}
-\fi
+%% \bxip@err@required{<string>}
+% NB: Now the same style as in ifxetex is used.
+\gdef\bxip@err@required#1{%
+  \begingroup
+    \errorcontextlines=-1\relax
+    \newlinechar=10\relax
+    \errmessage{^^J
+    ********************************************^^J
+    * #1 is required to compile this document.^^J
+    * Sorry!^^J
+    ********************************************}%
+  \endgroup}
 
-%%<+> \ifupTeX
-%%<+> \ifnativeupTeX
-%%<+> \ifnewupTeX
-\mathchardef\upTeXguessedversion=0
+%--------------------------------------- guess version
+
+%% \bxip@uptex@new@version
+\global\mathchardef\bxip@uptex@new@version=19
+
+%%<+> \upTeXguessedversion
+\global\mathchardef\upTeXguessedversion=0
 % if \ucs exists, then gv >= 1
-\bxip@test\ucs
-\ifbxip@ok
-  \mathchardef\upTeXguessedversion=1
+\bxip@test@primitive\ucs\ifbxip@ok
+  \global\mathchardef\upTeXguessedversion=1
   % if \enablecjktoken exists, then gv >= 6
-  \bxip@test\enablecjktoken
-  \ifbxip@ok
-    \mathchardef\upTeXguessedversion=6
+  \bxip@test@primitive\enablecjktoken\ifbxip@ok
+    \global\mathchardef\upTeXguessedversion=6
     % if \kchar exists, then gv >= 10
-    \bxip@test\kchar
-    \ifbxip@ok
-      \mathchardef\upTeXguessedversion=10
+    \bxip@test@primitive\kchar\ifbxip@ok
+      \global\mathchardef\upTeXguessedversion=10
       % if \forcecjktoken exists, then gv >= 19
-      \bxip@test\forcecjktoken
-      \ifbxip@ok
-        \mathchardef\upTeXguessedversion=19
+      \bxip@test@primitive\forcecjktoken\ifbxip@ok
+        \global\mathchardef\upTeXguessedversion=19
       \fi
     \fi
   \fi
 \fi
-\ifnum\upTeXguessedversion>0
-  \bxip@true{ifupTeX}
-  % native-ness check
-  \ifnum\ucs"3000="3000 \bxip@true{ifnativeupTeX}
-  \else \bxip@false{ifnativeupTeX}
-  \fi
-\else
-  \bxip@false{ifupTeX}
-  \bxip@false{ifnativeupTeX}
+
+%--------------------------------------- public stuffs
+
+%%<+> \ifpTeX
+\global\bxip@false{ifpTeX}
+\bxip@test@primitive\kanjiskip\ifbxip@ok
+  \global\bxip@true{ifpTeX}
 \fi
+%%<+> \ifptex == \ifpTeX
+\global\bxip@csletcs{ifptex}{ifpTeX}
+
+%%<+> \ifupTeX
+\global\bxip@false{ifupTeX}
+%%<+> \ifnativeupTeX
+\global\bxip@false{ifnativeupTeX}
+\ifnum\upTeXguessedversion>0
+  \global\bxip@true{ifupTeX}
+  % native-ness check
+  \ifnum\ucs"3000="3000 \global\bxip@true{ifnativeupTeX}\fi
+\fi
+%%<+> \ifuptex == \ifupTeX
+\global\bxip@csletcs{ifuptex}{ifupTeX}
+
+%%<+> \ifpTeXng
+\global\bxip@false{ifpTeXng}
+\bxip@test@primitive\ngbanner\ifbxip@ok
+  \global\bxip@true{ifpTeXng}
+\fi
+%%<+> \ifptexng == \ifpTeXng
+\global\bxip@csletcs{ifptexng}{ifpTeXng}
+
+%%<+> \ifstrictpTeX
+\global\bxip@false{ifstrictpTeX}
+\ifpTeX \ifupTeX\else
+  \global\bxip@true{ifstrictpTeX}
+\fi\fi
+%%<+> \ifstrictptex == \ifstrictpTeX
+\global\bxip@csletcs{ifstrictptex}{ifstrictpTeX}
 
 %%<+> \RequirepTeX
+\gdef\RequirepTeX{%
+  \ifpTeX\else \bxip@err@required{(u)pTeX}\fi}
+%%<+> \RequireStrictpTeX
+\gdef\RequireStrictpTeX{%
+  \ifstrictpTeX\else \bxip@err@required{pTeX (not upTeX)}\fi}
 %%<+> \RequireupTeX
+\gdef\RequireupTeX{%
+  \ifupTeX\else \bxip@err@required{upTeX}\fi}
 %%<+> \RequireNativeupTeX
-%%<+> \RequireNewupTeX
-\def\bxip@new@upTeX@version{0.19}
-\bxip@pream@def\RequirepTeX{%
-  \begingroup
-    \ifpTeX\else
-      \bxip@error{\bxip@msg@req{pTeX}}%
-    \fi
-  \endgroup}
-\bxip@pream@def\RequireupTeX{%
-  \begingroup
-    \ifupTeX\else
-      \bxip@error{\bxip@msg@req{upTeX}}%
-    \fi
-  \endgroup}
-\bxip@pream@def\RequireNativeupTeX{%
-  \begingroup
-    \ifnativeupTeX\else
-      \bxip@error{\bxip@msg@req{upTeX in Unicode}}%
-    \fi
-  \endgroup}
-\bxip@pream@def\RequirenativeupTeX{\RequireNativeupTeX}
-\bxip@pream@def\RequireNewupTeX{%
-  \bxip@with@default\bxip@new@upTeX@version
-   \bxip@require@new@uptex@a}
-\bxip@pream@def\bxip@require@new@uptex@a[#1]{%
-  \begingroup
-    \ifupTeX
-      \bxip@require@new@uptex@b\upTeXguessedversion{#1}{upTeX}%
-    \else \bxip@error{\bxip@msg@req{upTeX}}%
-    \fi
-  \endgroup}
-\bxip@pream@def\RequireNativeNewupTeX{%
-  \bxip@with@default\bxip@new@upTeX@version
-   \bxip@require@native@new@uptex@a}
-\bxip@pream@def\bxip@require@native@new@uptex@a[#1]{%
-  \begingroup
-    \ifnativeupTeX
-      \bxip@require@new@uptex@b\upTeXguessedversion{#1}{upTeX}%
-    \else \bxip@error{\bxip@msg@req{upTeX in Unicode}}%
-    \fi
-  \endgroup}
-\dimendef\bxip@dim=0
-\countdef\bxip@num=255
-\bxip@pream@def\bxip@require@new@uptex@b#1#2#3{%
-  \bxip@dim=#2pt \bxip@num\bxip@dim
-  \advance\bxip@num328 \divide\bxip@num 655
-  \ifnum#1<\bxip@num
-    \bxip@error{\bxip@msg@req{#3 v.>=#2}}%
+\gdef\RequireNativeupTeX{%
+  \ifnativeupTeX\else \bxip@err@required{upTeX in Unicode}\fi}
+%%<+> \RequirepTeXng
+\gdef\RequirepTeXng{%
+  \ifpTeXng\else \bxip@err@required{pTeX-ng}\fi}
+
+%--------------------------------------- deprecated stuffs
+
+%%<+>D \RequirenativeupTeX == \RequireNativeupTeX
+\gdef\RequirenativeupTeX{\RequireNativeupTeX}
+
+%%<+>D \ifnewupTeX
+\global\bxip@false{ifnewupTeX}
+\ifnum\upTeXguessedversion<\bxip@uptex@new@version\else
+  \global\bxip@true{ifnewupTeX}
+\fi
+
+%%<+>D \RequireNewupTeX
+\gdef\RequireNewupTeX{%
+  \bxip@with@default\bxip@uptex@new@version\bxip@require@new@uptex@a}
+\gdef\bxip@require@new@uptex@a[#1]{%
+  \ifupTeX
+    \bxip@check@version\upTeXguessedversion{#1}{upTeX}%
+  \else \bxip@err@required{upTeX}%
   \fi}
 
-%% clean up
-\let\bxip@latex\@undefined
-\let\bxip@true\@undefined
-\let\bxip@false\@undefined
-\let\bxip@test\@undefined
-\let\bxip@tmpa\@undefined
-\let\bxip@tmpb\@undefined
+%%<+>D \RequireNativeNewupTeX
+\gdef\RequireNativeNewupTeX{%
+  \bxip@with@default\bxip@uptex@new@version\bxip@require@new@uptex@b}
+\gdef\bxip@require@new@uptex@b[#1]{%
+  \ifnativeupTeX
+    \bxip@check@version\upTeXguessedversion{#1}{upTeX in Unicode}%
+  \else \bxip@err@required{upTeX in Unicode}%
+  \fi}
 
-%% all done
-\bxip@restore@cc
+%--------------------------------------- all done
+\endgroup
+\bxip@restore@codes
 \endinput
 %% EOF
