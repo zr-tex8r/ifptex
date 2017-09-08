@@ -36,24 +36,34 @@ LaTeX の場合：
 
 ### 機能
 
+注意：e-TeX拡張の有無は区別されない。
+
   * `\ifpTeX`（又は `\ifptex`）［if-トークン］  
-    pTeX（upTeX を含む）を使っているか。
+    pTeX（upTeX、pTeX-ng を含む）を使っているか。
   * `\ifstrictpTeX`（又は `\ifstrictptex`）［if-トークン］  
-    pTeX（upTeX ではなく）を使っているか。
+    pTeX（upTeX、pTeX-ng ではなく）を使っているか。
   * `\ifupTeX`（又は `\ifuptex`） ［if-トークン］  
-    upTeX を使っているか。
+    upTeX（pTeX-ng を含む）を使っているか。
+  * `\ifstrictupTeX`（又は `\ifstrictuptex`） ［if-トークン］  
+    upTeX（pTeX-ng ではなく）を使っているか。
   * `\ifnativeupTeX` ［if-トークン］  
     upTeX を内部文字コードが Unicode の状態で使っているか。  
   * `\ifpTeXng`（又は `\ifptexng`）［if-トークン］  
-    pTeX-ng を使っているか。
+    pTeX-ng を使っているか。  
+    ※一応 `\ifstrictpTeXng`（`\ifstrictptexng`）もある。
   * `\RequirepTeX`  
     `\ifpTeX` 不成立の場合はエラーを出す。
+  * `\RequireStirctpTeX`  
+    `\ifstrictpTeX` 不成立の場合はエラーを出す。
   * `\RequireupTeX`  
     `\ifupTeX` 不成立の場合はエラーを出す。
+  * `\RequireStrictupTeX`  
+    `\ifstrictupTeX` 不成立の場合はエラーを出す。
   * `\RequireNativeupTeX`  
-    `\ifNativeupTeX` 不成立の場合はエラーを出す。
+    `\ifnativeupTeX` 不成立の場合はエラーを出す。
   * `\RequirepTeXng`  
-    `\ifpTeXng` 不成立の場合はエラーを出す。
+    `\ifpTeXng` 不成立の場合はエラーを出す。  
+    ※一応 `\RequireStrictpTeXng` もある。
 
 
 ifuptex パッケージ ― ifptex の別名
@@ -76,6 +86,8 @@ LaTeX の場合：
 更新履歴
 --------
 
+  * Version 1.2  〈2017/09/09〉
+      - `\ifstrictupTeX`、`\RequireStrictupTeX` を追加。
   * Version 1.1  〈2017/05/04〉
       - 細かい調整。
   * Version 1.0  〈2013/04/29〉

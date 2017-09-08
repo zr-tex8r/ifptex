@@ -40,12 +40,16 @@ In LaTeX:
 
 ### Usage
 
+NB: Here “e-TeX-ness” is not considered.
+
   * `\ifpTeX` (or `\ifptex`)  [if-token]  
-    Whether the engine is pTeX (or its derivative, including upTeX).
+    Whether the engine is pTeX (including upTeX or pTeX-ng).
   * `\ifstrictpTeX` (or `\ifstrictptex`) [if-token]  
-    Whether the engine is pTeX (or its derivative) but *not* upTeX.
+    Whether the engine is pTeX but *not* upTeX or pTeX-ng.
   * `\ifupTeX` (or `\ifuptex`) [if-token]  
-    Whether the engine is upTeX (or its derivative).
+    Whether the engine is upTeX (including pTeX-ng).
+  * `\ifstrictupTeX` (or `\ifstrictuptex`) [if-token]  
+    Whether the engine is upTeX but *not* pTeX-ng.
   * `\ifnativeupTeX` [if-token]  
     Whether the engine is upTeX and its internal encoding is Unicode.
   * `\ifpTeXng` (or `\ifptexng`) [if-token]  
@@ -56,6 +60,8 @@ In LaTeX:
     Issues an error if `\ifstrictpTeX` fails.
   * `\RequireupTeX`  
     Issues an error if `\ifupTeX` fails.
+  * `\RequireStrictupTeX`  
+    Issues an error if `\ifstrictupTeX` fails.
   * `\RequireNativeupTeX`  
     Issues an error if `\ifnativeupTeX` fails.
   * `\RequirepTeXng`  
@@ -86,6 +92,8 @@ Just the same as the ifptex package.
 Revision History
 ----------------
 
+  * Version 1.2  〈2017/09/09〉
+      - Add `\ifstrictupTeX` and `RequireStrictupTeX`.
   * Version 1.1  〈2017/05/04〉
       - Minor fix.
   * Version 1.0  〈2013/04/29〉

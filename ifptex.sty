@@ -47,7 +47,7 @@
 
 %% package declaration
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ifptex}[2017/05/04 v1.1-pre pTeX checker]
+\ProvidesPackage{ifptex}[2017/09/09 v1.2 pTeX checker]
 
 %% enter the big group
 \begingroup
@@ -133,6 +133,13 @@
 \fi
 
 %--------------------------------------- public stuffs
+% Note:
+% 1) Names '\ifFooTeX' are used in iftex.
+% 2) Names '\iffootex' are used in ifxetex/ifluatex/....
+% My preferences are:
+% - '\ifwhateverFooTeX' and '\RequireWhateverFooTeX'.
+% But I also provide aliases '\iffootex' and '\ifstrictfootex' for
+% compatibility with 1) and the old ifuptex.
 
 %%<+> \ifpTeX
 \global\bxip@false{ifpTeX}
@@ -170,6 +177,19 @@
 %%<+> \ifstrictptex == \ifstrictpTeX
 \global\bxip@csletcs{ifstrictptex}{ifstrictpTeX}
 
+%%<+> \ifstrictupTeX
+\global\bxip@false{ifstrictupTeX}
+\ifupTeX \ifpTeXng\else
+  \global\bxip@true{ifstrictupTeX}
+\fi\fi
+%%<+> \ifstrictuptex == \ifstrictupTeX
+\global\bxip@csletcs{ifstrictuptex}{ifstrictupTeX}
+
+%%<+> \ifstrictpTeXng (== \ifpTeXng, for now)
+\global\bxip@csletcs{ifstrictpTeXng}{ifpTeXng}
+%%<+> \ifstrictptexng == \ifstrictpTeXng
+\global\bxip@csletcs{ifstrictptexng}{ifstrictpTeXng}
+
 %%<+> \RequirepTeX
 \gdef\RequirepTeX{%
   \ifpTeX\else \bxip@err@required{(u)pTeX}\fi}
@@ -179,12 +199,18 @@
 %%<+> \RequireupTeX
 \gdef\RequireupTeX{%
   \ifupTeX\else \bxip@err@required{upTeX}\fi}
+%%<+> \RequireStrictupTeX
+\gdef\RequireStrictupTeX{%
+  \ifstrictupTeX\else \bxip@err@required{upTeX (not pTeX-ng)}\fi}
 %%<+> \RequireNativeupTeX
 \gdef\RequireNativeupTeX{%
   \ifnativeupTeX\else \bxip@err@required{upTeX in Unicode}\fi}
 %%<+> \RequirepTeXng
 \gdef\RequirepTeXng{%
   \ifpTeXng\else \bxip@err@required{pTeX-ng}\fi}
+%%<+> \RequireStrictpTeXng
+\gdef\RequireStrictpTeXng{%
+  \ifstrictpTeXng\else \bxip@err@required{pTeX-ng}\fi}
 
 %--------------------------------------- deprecated stuffs
 
