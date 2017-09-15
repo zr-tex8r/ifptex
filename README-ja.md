@@ -86,6 +86,8 @@ LaTeX の場合：
 更新履歴
 --------
 
+  * Version 1.2a 〈2017/09/15〉
+      - (試験的) `漢字コード=UTF-8` 機能を追加。
   * Version 1.2  〈2017/09/09〉
       - `\ifstrictupTeX`、`\RequireStrictupTeX` を追加。
   * Version 1.1  〈2017/05/04〉
