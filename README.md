@@ -92,6 +92,7 @@ Just the same as the ifptex package.
 Revision History
 ----------------
 
+  * Version 1.2b 〈2017/09/20〉
   * Version 1.2a 〈2017/09/15〉
   * Version 1.2  〈2017/09/09〉
       - Add `\ifstrictupTeX` and `RequireStrictupTeX`.

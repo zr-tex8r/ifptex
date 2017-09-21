@@ -47,7 +47,7 @@
 
 %% package declaration
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ifptex}[2017/09/15 v1.2a pTeX checker]
+\ProvidesPackage{ifptex}[2017/09/20 v1.2b pTeX checker]
 \def\bxip@pkgname{ifptex}
 
 %% enter the big group
@@ -214,6 +214,7 @@
   \ifstrictpTeXng\else \bxip@err@required{pTeX-ng}\fi}
 
 %--------------------------------------- KanjiKoodo declaration
+\ifpTeX
 
 %% \bxip@def@str\CS{<strcode>}
 \def\bxip@def@str#1#2{%
@@ -282,6 +283,7 @@
     \epTeXinputencoding utf8}% unterminated
 \fi
 
+\fi
 %--------------------------------------- deprecated stuffs
 
 %%<+>D \ifNativeupTeX == \ifnativeupTeX
