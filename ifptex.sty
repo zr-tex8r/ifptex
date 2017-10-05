@@ -47,7 +47,7 @@
 
 %% package declaration
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ifptex}[2017/09/20 v1.2b pTeX checker]
+\ProvidesPackage{ifptex}[2017/10/04 v1.2c pTeX checker]
 \def\bxip@pkgname{ifptex}
 
 %% enter the big group
@@ -269,7 +269,7 @@
   \gdef\bxip@ensure@utf@a#1{%
     \PackageWarning\bxip@pkgname
      {The input kanji code for file '\@currname.\@currext'\MessageBreak
-      is set to #1, but should be utf8\@gobble}%
+      is set to #1, but should be utf8\@gobble}}%
 \else
   \gdef\bxip@ensure@utf@a#1{%
     \PackageInfo\bxip@pkgname
