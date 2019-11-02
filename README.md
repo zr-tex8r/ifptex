@@ -9,15 +9,17 @@ for backward compatibility.
 
 ### System Requirements
 
-  - TeX format: plain TeX, LaTeX (and any plain-compatible ones).
-  - TeX engine: Anything.
-  - DVI driver (in DVI mode): Anything.
+  * TeX format: plain TeX, LaTeX, and INI mode.
+  * TeX engine: Anything.
+  * DVI driver (in DVI mode): Anything.
+  * Dependent packages:
+      - iftex
 
 ### Installation
 
 In a system compliant to TDS 1.1, move the files as follows:
 
-  - `*.sty` → $TEXMF/tex/latex/ifptex
+  - `*.sty` → $TEXMF/tex/generic/ifptex
 
 And rehash your TEXMF trees if necessary.
 
@@ -42,17 +44,17 @@ In LaTeX:
 
 NB: Here “e-TeX-ness” is not considered.
 
-  * `\ifpTeX` (or `\ifptex`)  [if-token]  
+  * `\ifptex` (or `\ifpTeX`)  [if-token]  
     Whether the engine is pTeX (including upTeX or pTeX-ng).
-  * `\ifstrictpTeX` (or `\ifstrictptex`) [if-token]  
+  * `\ifstrictptex` (or `\ifstrictpTeX`) [if-token]  
     Whether the engine is pTeX but *not* upTeX or pTeX-ng.
-  * `\ifupTeX` (or `\ifuptex`) [if-token]  
+  * `\ifuptex` (or `\ifupTeX`) [if-token]  
     Whether the engine is upTeX (including pTeX-ng).
-  * `\ifstrictupTeX` (or `\ifstrictuptex`) [if-token]  
+  * `\ifstrictuptex` (or `\ifstrictupTeX`) [if-token]  
     Whether the engine is upTeX but *not* pTeX-ng.
-  * `\ifnativeupTeX` [if-token]  
+  * `\ifnativeuptex` (or `\ifnativeupTeX`) [if-token]  
     Whether the engine is upTeX and its internal encoding is Unicode.
-  * `\ifpTeXng` (or `\ifptexng`) [if-token]  
+  * `\ifptexng` (or `\ifpTeXng`) [if-token]  
     Whether the engine is pTeX-ng.
   * `\RequirepTeX`  
     Issues an error if `\ifpTeX` fails.
@@ -92,6 +94,12 @@ Just the same as the ifptex package.
 Revision History
 ----------------
 
+  * Version 2.0  〈2019/11/01〉
+      - Adjust to work better with the new iftex package maintanined
+        by the LaTeX3 Project.
+          - Now iftex is loaded inside ifptex.
+          - Provide always all-lowercase `\if...tex` commands.
+      - Support for loading in INI mode.
   * Version 1.2c 〈2017/10/04〉
   * Version 1.2b 〈2017/09/20〉
   * Version 1.2a 〈2017/09/15〉

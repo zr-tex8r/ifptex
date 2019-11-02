@@ -9,15 +9,17 @@ ifptex パッケージは ifxetex や ifluatex 等のパッケージの pTeX 版
 
 ### システム要件
 
-  - TeX フォーマット： plain TeX、LaTeX （および他の plain 互換なもの）
-  - TeX エンジン： 不問
-  - DVI ウェア（DVI 出力時）： 不問
+  * TeX フォーマット： plain TeX、LaTeX、INI モード
+  * TeX エンジン： 不問
+  * DVI ウェア（DVI 出力時）： 不問
+  * 依存パッケージ：
+      - iftex
 
 ### インストール
 
 TDS 1.1 に準拠するシステムの場合、以下のようにファイルを移動する：
 
-  - `*.sty` → $TEXMF/tex/latex/ifptex
+  - `*.sty` → $TEXMF/tex/generic/ifptex
 
 この後必要に応じて mktexlsr を実行する。
 
@@ -38,19 +40,19 @@ LaTeX の場合：
 
 注意：e-TeX拡張の有無は区別されない。
 
-  * `\ifpTeX`（又は `\ifptex`）［if-トークン］  
+  * `\ifptex`（又は `\ifpTeX`）［if-トークン］  
     pTeX（upTeX、pTeX-ng を含む）を使っているか。
-  * `\ifstrictpTeX`（又は `\ifstrictptex`）［if-トークン］  
+  * `\ifstrictptex`（又は `\ifstrictpTeX`）［if-トークン］  
     pTeX（upTeX、pTeX-ng ではなく）を使っているか。
-  * `\ifupTeX`（又は `\ifuptex`） ［if-トークン］  
+  * `\ifuptex`（又は `\ifupTeX`） ［if-トークン］  
     upTeX（pTeX-ng を含む）を使っているか。
-  * `\ifstrictupTeX`（又は `\ifstrictuptex`） ［if-トークン］  
+  * `\ifstrictuptex`（又は `\ifstrictupTeX`） ［if-トークン］  
     upTeX（pTeX-ng ではなく）を使っているか。
-  * `\ifnativeupTeX` ［if-トークン］  
+  * `\ifnativeuptex`（又は `\ifnativeupTeX`） ［if-トークン］  
     upTeX を内部文字コードが Unicode の状態で使っているか。  
-  * `\ifpTeXng`（又は `\ifptexng`）［if-トークン］  
+  * `\ifptexng`（又は `\ifpTeXng`）［if-トークン］  
     pTeX-ng を使っているか。  
-    ※一応 `\ifstrictpTeXng`（`\ifstrictptexng`）もある。
+    ※一応 `\ifstrictptexng`（`\ifstrictpTeXng`）もある。
   * `\RequirepTeX`  
     `\ifpTeX` 不成立の場合はエラーを出す。
   * `\RequireStirctpTeX`  
@@ -86,6 +88,11 @@ LaTeX の場合：
 更新履歴
 --------
 
+  * Version 2.0  〈2019/11/01〉
+      - LaTeX チームによる新しい iftex パッケージと動作を整合させる。
+          - 特に、iftex を中で読み込むようにする。
+          - `\if...tex` について常に小文字のみの名前を用意する。
+      - INI モードでの読込に対応。
   * Version 1.2c 〈2017/10/04〉
       - バグ修正。
   * Version 1.2b 〈2017/09/20〉
