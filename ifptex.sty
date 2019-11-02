@@ -9,50 +9,78 @@
 %%
 %
 %% avoid multiple loading
-\csname\if11bxipIfptexLoaded\fi\endcsname
+\csname\if11bxipIfptexLoaded\fi\endcsname%
 %% code guards
-\edef\x{%
+\begingroup\count255\catcode61\global\catcode61\catcode48%
+\catcode91=1\catcode93=2\xdef\bxipIfptexLoaded[%
+\catcode61=\the\count255%
+\catcode13=\the\catcode13%
 \catcode32=\the\catcode32%
-\catcode33=\the\catcode33%
 \catcode35=\the\catcode35%
-\catcode42=\the\catcode42%
+\catcode123=\the\catcode123%
+\catcode125=\the\catcode125%
+\endlinechar=\the\endlinechar]%
+\endgroup\catcode32=10\catcode13=5\endlinechar=13\relax%
+\catcode35=6 \catcode123=1 \catcode125=2
+\edef\bxipIfptexLoaded{\bxipIfptexLoaded
+\catcode33=\the\catcode33%
+\catcode34=\the\catcode34%
+\catcode39=\the\catcode39%
+\catcode45=\the\catcode45%
+\catcode46=\the\catcode46%
+\catcode47=\the\catcode47%
+\catcode58=\the\catcode58%
 \catcode60=\the\catcode60%
 \catcode62=\the\catcode62%
+\catcode63=\the\catcode63%
 \catcode64=\the\catcode64%
 \catcode91=\the\catcode91%
 \catcode93=\the\catcode93%
+\catcode96=\the\catcode96%
 \relax}
-\catcode32=10\relax
-\catcode33=11 %<">
-\catcode35=6  %<#>
-\catcode42=12 %<*>
-\catcode60=12 %<<>
-\catcode62=12 %<>>
-\catcode64=11 %<@>
-\catcode91=12 %<[>
-\catcode93=12 %<]>
-\edef\bxip@restore@codes{\x
+\catcode33=12 % <!>
+\catcode34=12 % <">
+\catcode39=12 % <'>
+\catcode45=12 % <->
+\catcode46=12 % <.>
+\catcode47=12 % </>
+\catcode58=12 % <:>
+\catcode60=12 % <<>
+\catcode62=12 % <>>
+\catcode63=12 % <?>
+\catcode64=11 % <@>
+\catcode91=12 % <[>
+\catcode93=12 % <]>
+\catcode96=12 % <`>
+\edef\bxip@restore@codes{\bxipIfptexLoaded
   \noexpand\let\noexpand\bxip@restore@codes\relax}
 \def\bxipIfptexLoaded{\endinput}
 
 %% check for LaTeX
 \ifx\RequirePackage\@undefined %<*!LaTeX>
   \let\bxip@latex=f
-  \long\def\x#1\ProvidesPackage#2[#3]{%
+  \long\def\bxip@input#1\ProvidesPackage#2[#3]{%
+    \def\bxip@input\RequirePackage##1[##2]{\input ##1.sty\relax}%
     \immediate\write-1{Package: #2 #3}}
-  \expandafter\x
+  \expandafter\bxip@input
 \else                          %<*LaTeX>
-  \let\bxip@latex=t \let\x\relax
+  \let\bxip@latex=t
+  \let\bxip@input\relax
 \fi                            %</LaTeX>
 
 %% package declaration
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ifptex}[2017/10/04 v1.2c pTeX checker]
+\ProvidesPackage{ifptex}[2017/10/04 v2.0-pre pTeX checker]
 \def\bxip@pkgname{ifptex}
 
-%% enter the big group
-\begingroup
+%% packages
+\ifx\newif\@undefined\else
+\bxip@input
+\RequirePackage{iftex}[2013/04/04]% v0.2
+\fi
 
+%=======================================
+\begingroup % entering a big group
 %--------------------------------------- helpers
 
 %% \bxip@csletcs{<csnameA>}{<csnameB>}
@@ -96,18 +124,28 @@
 \gdef\bxip@check@version@a#1#2#3#4#5#6\relax#7{%
   \bxip@err@required{#7 v.>=\number#2#3#4.#5#6}}
 
-%% \bxip@err@required{<string>}
-% NB: Now the same style as in ifxetex is used.
-\gdef\bxip@err@required#1{%
-  \begingroup
-    \errorcontextlines=-1\relax
-    \newlinechar=10\relax
-    \errmessage{^^J
-    ********************************************^^J
-    * #1 is required to compile this document.^^J
-    * Sorry!^^J
+%% \bxip@Require\ifXXX{<string>}\fi
+% (Equivalent to \IFTEX@Require of iftex.)
+\gdef\bxip@Require#1#2#3{%
+  #1\else
+    \newlinechar64\relax
+    \errorcontextlines-1\relax
+    \immediate\write20{@
+    ********************************************@
+    * #2 is required to compile this document.@
+    * Sorry!@
     ********************************************}%
-  \endgroup}
+    % do a hard stop
+    \batchmode\read-1to\bxip@tmpa
+  #3}
+\gdef\bxip@err@required#1{\bxip@Require\iftrue{#1}\fi}
+
+%% \bxip@protected
+\let\bxip@protected\protected
+\ifx\directlua\@undefined\else
+  \directlua{tex.enableprimitives('bxip@', {'protected'})}
+\fi
+\bxip@csletcs{bxip@protected}{bxip@protected}
 
 %--------------------------------------- guess version
 
@@ -135,12 +173,13 @@
 
 %--------------------------------------- public stuffs
 % Note:
-% 1) Names '\ifFooTeX' are used in iftex.
+% 1) Names '\ifFooTeX' were used in old iftex.
 % 2) Names '\iffootex' are used in ifxetex/ifluatex/....
-% My preferences are:
+% My preferences used to be:
 % - '\ifwhateverFooTeX' and '\RequireWhateverFooTeX'.
-% But I also provide aliases '\iffootex' and '\ifstrictfootex' for
-% compatibility with 1) and the old ifuptex.
+% But now I adopt the preferences of new iftex:
+% - '\ifwhateverfootex' and '\RequireWhateverFooTeX'.
+% I also provide aliases '\ifwhateverFooTeX' for compatibility.
 
 %%<+> \ifpTeX
 \global\bxip@false{ifpTeX}
@@ -161,6 +200,8 @@
 \fi
 %%<+> \ifuptex == \ifupTeX
 \global\bxip@csletcs{ifuptex}{ifupTeX}
+%%<+> \ifnativeuptex == \ifnativeupTeX
+\global\bxip@csletcs{ifnativeuptex}{ifnativeupTeX}
 
 %%<+> \ifpTeXng
 \global\bxip@false{ifpTeXng}
@@ -192,29 +233,29 @@
 \global\bxip@csletcs{ifstrictptexng}{ifstrictpTeXng}
 
 %%<+> \RequirepTeX
-\gdef\RequirepTeX{%
-  \ifpTeX\else \bxip@err@required{(u)pTeX}\fi}
+\bxip@protected\gdef\RequirepTeX{%
+  \bxip@Require\ifpTeX{(u)pTeX}\fi}
 %%<+> \RequireStrictpTeX
-\gdef\RequireStrictpTeX{%
-  \ifstrictpTeX\else \bxip@err@required{pTeX (not upTeX)}\fi}
+\bxip@protected\gdef\RequireStrictpTeX{%
+  \bxip@Require\ifstrictpTeX{pTeX (not upTeX)}\fi}
 %%<+> \RequireupTeX
-\gdef\RequireupTeX{%
-  \ifupTeX\else \bxip@err@required{upTeX}\fi}
+\bxip@protected\gdef\RequireupTeX{%
+  \bxip@Require\ifupTeX{upTeX}\fi}
 %%<+> \RequireStrictupTeX
-\gdef\RequireStrictupTeX{%
-  \ifstrictupTeX\else \bxip@err@required{upTeX (not pTeX-ng)}\fi}
+\bxip@protected\gdef\RequireStrictupTeX{%
+  \bxip@Require\ifstrictupTeX{upTeX (not pTeX-ng)}\fi}
 %%<+> \RequireNativeupTeX
-\gdef\RequireNativeupTeX{%
-  \ifnativeupTeX\else \bxip@err@required{upTeX in Unicode}\fi}
+\bxip@protected\gdef\RequireNativeupTeX{%
+  \bxip@Require\ifnativeupTeX{upTeX in Unicode}\fi}
 %%<+> \RequirepTeXng
-\gdef\RequirepTeXng{%
-  \ifpTeXng\else \bxip@err@required{pTeX-ng}\fi}
+\bxip@protected\gdef\RequirepTeXng{%
+  \bxip@Require\ifpTeXng{pTeX-ng}\fi}
 %%<+> \RequireStrictpTeXng
-\gdef\RequireStrictpTeXng{%
-  \ifstrictpTeXng\else \bxip@err@required{pTeX-ng}\fi}
+\bxip@protected\gdef\RequireStrictpTeXng{%
+  \bxip@Require\ifstrictpTeXng{pTeX-ng}\fi}
 
 %--------------------------------------- KanjiKoodo declaration
-\ifpTeX
+\ifpTeX \ifx t\bxip@latex
 
 %% \bxip@def@str\CS{<strcode>}
 \def\bxip@def@str#1#2{%
@@ -283,7 +324,7 @@
     \epTeXinputencoding utf8}% unterminated
 \fi
 
-\fi
+\fi\fi
 %--------------------------------------- deprecated stuffs
 
 %%<+>D \ifNativeupTeX == \ifnativeupTeX
@@ -317,6 +358,10 @@
 
 %--------------------------------------- all done
 \endgroup
+% clean up
+\let\bxip@latex\@undefined
+\let\bxip@input\@undefined
+\let\bxip@protected\@undefined
 \bxip@restore@codes
 \endinput
 %% EOF
