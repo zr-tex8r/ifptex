@@ -153,7 +153,29 @@
 \global\mathchardef\bxip@uptex@new@version=19
 
 %%<+> \upTeXguessedversion
+% NB: The value of \upTeXguessedversion on pTeX is zero.
 \global\mathchardef\upTeXguessedversion=0
+\bxip@test@primitive\ptexversion\ifbxip@ok %<*version>
+% If \(u)ptexversion is supported...
+
+  % get version from \uptexversion/revision
+  \bxip@test@primitive\uptexversion\ifbxip@ok
+  \bxip@test@primitive\uptexrevision\ifbxip@ok
+    \def\bxip@tmpa#1#2#3#4\relax{%
+      \chardef\bxip@tmpa=0\relax
+      \ifx.#1\afterassignment\bxip@tmpb\chardef\bxip@tmpa=0#2#3\relax
+      \fi}
+    \def\bxip@tmpb#1\relax{}
+    \expandafter\bxip@tmpa\uptexrevision????\relax
+    \bxip@cnta=\uptexversion\relax
+    \multiply\bxip@cnta100\relax
+    \advance\bxip@cnta\bxip@tmpa
+    \global\mathchardef\upTeXguessedversion=\bxip@cnta
+  \fi\fi
+
+\else               %<*!version>
+% If \(u)ptexversion is not supported...
+
 % if \ucs exists, then gv >= 1
 \bxip@test@primitive\ucs\ifbxip@ok
   \global\mathchardef\upTeXguessedversion=1
@@ -170,6 +192,8 @@
     \fi
   \fi
 \fi
+
+\fi                 %</version>
 
 %--------------------------------------- public stuffs
 % Note:
