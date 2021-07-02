@@ -94,6 +94,9 @@ Just the same as the ifptex package.
 Revision History
 ----------------
 
+  * Version 2.1  〈2021/07/01〉 
+      - Adjust for the future version of pTeX.
+      - Drop an undocumented feature.
   * Version 2.0  〈2019/11/01〉
       - Adjust to work better with the new iftex package maintanined
         by the LaTeX3 Project.
