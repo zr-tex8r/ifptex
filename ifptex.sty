@@ -138,7 +138,7 @@
     % do a hard stop
     \batchmode\read-1to\bxip@tmpa
   #3}
-\gdef\bxip@err@required#1{\bxip@Require\iftrue{#1}\fi}
+\gdef\bxip@err@required#1{\bxip@Require\iffalse{#1}\fi}
 
 %% \bxip@protected
 \let\bxip@protected\protected
@@ -149,17 +149,41 @@
 
 %--------------------------------------- guess version
 
-%% \bxip@uptex@new@version
-\global\mathchardef\bxip@uptex@new@version=19
-
 %%<+> \upTeXguessedversion
-% NB: The value of \upTeXguessedversion on pTeX is zero.
-\global\mathchardef\upTeXguessedversion=0
-\bxip@test@primitive\ptexversion\ifbxip@ok %<*version>
-% If \(u)ptexversion is supported...
+% A \mathchardef constant that represents the guessed version
+% of the upTeX engine. (123 means version 1.23.)
+%  - The version 1.23 or later has primitive \uptexversion/revision,
+%    from which the correct version value can be obtained.
+%  - For the older versions, the version value is guessed from various
+%    features of the engine, and the minimum possible values is stored
+%    to \upTeXguessedversion. (For the versions earlier than v0.06,
+%    however, \upTeXguessedversion is set to 1.)
+%  - If the engine is not regarded as upTeX (or its derivative), then
+%    \upTeXguessedversion is set to zero.
 
-  % get version from \uptexversion/revision
-  \bxip@test@primitive\uptexversion\ifbxip@ok
+% [Development history of upTeX until version 1.23]
+% Version 1.23 [2018-02-24] Introduce \uptexversion/revision
+% Version 1.22 [2017-01-15] Adopt blocks of Unicode v9.0.0
+% Version 1.21 [2016-02-20] Adopt blocks of Unicode v8.0.0
+% Version 1.20 [2014-12-29] Adopt blocks of Unicode v7.0.0
+% Version 1.11 [2012-09-21] (Fix bug on \meaning\kchardef)
+% Version 1.10 [2012-04-29] Adopt blocks of Unicode v6.1.0
+% Version 1.00 [2012-01-15] Adopt blocks of Unicode v6.0.0
+% Version 0.30 [2010-04-10] (No observable changes)
+% Version 0.29 [2010-01-31] Adopt blocks of Unicode v5.2.0
+% Version 0.28 [2009-08-23] (Fix bug on \if test)
+% Version 0.21 [2008-03-13] (Fix bug on \uppercase)
+% Version 0.19 [2007-12-26] Introduce \forcecjktoken
+% Version 0.12 [2007-08-25] Adjust newline after hangul
+% Version 0.11 [2007-08-07] (Fix bug on \jcharwidowpenalty)
+% Version 0.10 [2007-07-28] Introduce \kchar and \kchardef
+% Version 0.06 [2007-04-15] Introduce \enable/disablecjktoken
+% Version 0.00 [2007-01-27] Initial version
+
+\global\let\upTeXguessedversion\relax
+\bxip@test@primitive\uptexversion\ifbxip@ok
+  % If the engine has \uptexversion, it is upTeX of >= v1.23.
+  % The exact version can be known from \uptexversion/revision.
   \bxip@test@primitive\uptexrevision\ifbxip@ok
     \def\bxip@tmpa#1#2#3#4\relax{%
       \chardef\bxip@tmpa=0\relax
@@ -171,29 +195,65 @@
     \multiply\bxip@cnta100\relax
     \advance\bxip@cnta\bxip@tmpa
     \global\mathchardef\upTeXguessedversion=\bxip@cnta
-  \fi\fi
-
-\else               %<*!version>
-% If \(u)ptexversion is not supported...
-
-% if \ucs exists, then gv >= 1
-\bxip@test@primitive\ucs\ifbxip@ok
-  \global\mathchardef\upTeXguessedversion=1
-  % if \enablecjktoken exists, then gv >= 6
-  \bxip@test@primitive\enablecjktoken\ifbxip@ok
-    \global\mathchardef\upTeXguessedversion=6
-    % if \kchar exists, then gv >= 10
-    \bxip@test@primitive\kchar\ifbxip@ok
-      \global\mathchardef\upTeXguessedversion=10
-      % if \forcecjktoken exists, then gv >= 19
-      \bxip@test@primitive\forcecjktoken\ifbxip@ok
-        \global\mathchardef\upTeXguessedversion=19
-      \fi
-    \fi
+  \else % UNEXPECTED CASE
+    \global\mathchardef\upTeXguessedversion=0
   \fi
 \fi
-
-\fi                 %</version>
+\ifx\upTeXguessedversion\relax % still unknown
+  \bxip@test@primitive\ptexversion\ifbxip@ok
+    % If the engine has \ptexversion but not \uptexversion,
+    % it is a real pTeX.
+    \global\mathchardef\upTeXguessedversion=0
+    % Note: The recent version of pTeX has primitive \ucs.
+  \fi
+\fi
+\ifx\upTeXguessedversion\relax % still unknown
+  \bxip@test@primitive\ucs\ifbxip@ok\else
+    % If the engine does not have \ucs, it is pTeX.
+    \global\mathchardef\upTeXguessedversion=0
+  \fi
+\fi
+% Here if \upTeXguessedversion is not zero, it is upTeX definitely.
+\ifx\upTeXguessedversion\relax % still unknown
+  % If \uptexversion is missing, I guess the version according to
+  % the way the Unicode blocks are divided.
+  \def\bxip@tmpa#1#2{% check if #1 and #2 belong to different blocks
+    \bxip@true{ifbxip@ok}\begingroup
+      \kcatcode#1=16\kcatcode#2=17\relax
+      \ifnum\kcatcode#1=17 \aftergroup\bxip@tmpb \fi
+    \endgroup}
+  \def\bxip@tmpb{\bxip@false{ifbxip@ok}}
+  \bxip@tmpa{"1C50}{"1C80}\ifbxip@ok
+    \global\mathchardef\upTeXguessedversion=122
+  \else\bxip@tmpa{"AB30}{"AB70}\ifbxip@ok
+    \global\mathchardef\upTeXguessedversion=121
+  \else\bxip@tmpa{"1A20}{"1AB0}\ifbxip@ok
+    \global\mathchardef\upTeXguessedversion=120
+  \else\bxip@tmpa{"840}{"8A0}\ifbxip@ok
+    \global\mathchardef\upTeXguessedversion=110
+  \else\bxip@tmpa{"800}{"840}\ifbxip@ok
+    \global\mathchardef\upTeXguessedversion=100
+  \else\bxip@tmpa{"7C0}{"800}\ifbxip@ok
+    \global\mathchardef\upTeXguessedversion=29
+  \else
+    \global\mathchardef\upTeXguessedversion=1
+  \fi\fi\fi\fi\fi\fi
+\fi
+% I guess the more correct version according to the existence
+% and/or the behavior of the specific primitives.
+\ifnum\upTeXguessedversion=1 % v0.00-0.28
+  \bxip@test@primitive\forcecjktoken\ifbxip@ok
+    % \forcecjktoken exists
+    \global\mathchardef\upTeXguessedversion=19
+  \else\bxip@test@primitive\kchar\ifbxip@ok
+    % \kchar exists
+    \global\mathchardef\upTeXguessedversion=10
+  \else\bxip@test@primitive\enablecjktoken\ifbxip@ok
+    % \enablecjktoken exists
+    \global\mathchardef\upTeXguessedversion=6
+  % else \upTeXguessedversion=1 (v0.00-0.05)
+  \fi\fi\fi
+\fi
 
 %--------------------------------------- public stuffs
 % Note:
@@ -278,12 +338,29 @@
 \bxip@protected\gdef\RequireStrictpTeXng{%
   \bxip@Require\ifstrictpTeXng{pTeX-ng}\fi}
 
+%%<+> \RequireupTeXAtLeast{<min_version>}
+\bxip@protected\gdef\RequireupTeXAtLeast#1{%
+  \ifupTeX
+    \bxip@check@version\upTeXguessedversion{#1}{upTeX}%
+  \else \bxip@err@required{upTeX}%
+  \fi}
+
+%%<+> \RequireNativeupTeXAtLeast{<min_version>}
+\bxip@protected\gdef\RequireNativeupTeXAtLeast#1{%
+  \ifnativeupTeX
+    \bxip@check@version\upTeXguessedversion{#1}{upTeX in Unicode}%
+  \else \bxip@err@required{upTeX in Unicode}%
+  \fi}
+
 %--------------------------------------- deprecated stuffs
 
 %%<+>D \ifNativeupTeX == \ifnativeupTeX
 \global\bxip@csletcs{ifNativeupTeX}{ifnativeupTeX}
 %%<+>D \RequirenativeupTeX == \RequireNativeupTeX
 \gdef\RequirenativeupTeX{\RequireNativeupTeX}
+
+%% \bxip@uptex@new@version
+\global\mathchardef\bxip@uptex@new@version=19
 
 %%<+>D \ifnewupTeX
 \global\bxip@false{ifnewupTeX}
@@ -295,19 +372,13 @@
 \gdef\RequireNewupTeX{%
   \bxip@with@default\bxip@uptex@new@version\bxip@require@new@uptex@a}
 \gdef\bxip@require@new@uptex@a[#1]{%
-  \ifupTeX
-    \bxip@check@version\upTeXguessedversion{#1}{upTeX}%
-  \else \bxip@err@required{upTeX}%
-  \fi}
+  \RequireupTeXAtLeast{#1}}
 
 %%<+>D \RequireNativeNewupTeX
 \gdef\RequireNativeNewupTeX{%
   \bxip@with@default\bxip@uptex@new@version\bxip@require@new@uptex@b}
 \gdef\bxip@require@new@uptex@b[#1]{%
-  \ifnativeupTeX
-    \bxip@check@version\upTeXguessedversion{#1}{upTeX in Unicode}%
-  \else \bxip@err@required{upTeX in Unicode}%
-  \fi}
+  \RequireNativeupTeXAtLeast{#1}}
 
 %--------------------------------------- all done
 \endgroup
