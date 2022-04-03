@@ -68,6 +68,16 @@ NB: Here “e-TeX-ness” is not considered.
     Issues an error if `\ifnativeupTeX` fails.
   * `\RequirepTeXng`  
     Issues an error if `\ifpTeXng` fails.
+  * `\upTeXguessedversion` [mathchardef-token]  
+    The guessed value of upTeX version; given as a 100-folded integer.  
+    NB. On version 1.23 or later, the value is correct.  
+    NB. On a non-upTeX engine, the value is zero.
+  * `\RequireupTeXAtLeast{<required>}`  
+    Issues an error if `\upTeXguessedversion` is smaller than the given
+    required value.
+  * `\RequireNativeupTeXAtLeast{<required>}`  
+    Issues an error either if `\upTeXguessedversion` is smaller than
+    the given required value or if `\ifnativeupTeX` fails.
 
 
 ifuptex Package ― Alias of ifptex
@@ -94,6 +104,9 @@ Just the same as the ifptex package.
 Revision History
 ----------------
 
+  * Version 2.2  〈2022/04/03〉 
+      - Officialy support `\upTeXguessedversion`.
+      - Add `\Require(Native)upTeXAtLeast`.
   * Version 2.1  〈2021/07/01〉 
       - Adjust for the future version of pTeX.
       - Drop an undocumented feature.

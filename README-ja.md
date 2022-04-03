@@ -66,6 +66,15 @@ LaTeX の場合：
   * `\RequirepTeXng`  
     `\ifpTeXng` 不成立の場合はエラーを出す。  
     ※一応 `\RequireStrictpTeXng` もある。
+  * `\upTeXguessedversion` ［mathchardef-トークン］  
+    upTeX のバージョンの推測値（を百倍した整数値）。  
+    ※1.23版以降では常に正確なバージョン値が得られる。  
+    ※upTeX 以外のエンジンでは 0 になる。
+  * `\RequireupTeXAtLeast{<要求値>}`  
+    `\upTeXguessedversion` の値が要求値より小さい場合はエラーを出す。
+  * `\RequireNativeupTeXAtLeast{<要求値>}`  
+    `\upTeXguessedversion` の値が要求値より小さいまたは `\ifnativeupTeX`
+    が不成立の場合はエラーを出す。
 
 
 ifuptex パッケージ ― ifptex の別名
@@ -88,6 +97,9 @@ LaTeX の場合：
 更新履歴
 --------
 
+  * Version 2.2  〈2022/04/03〉 
+      - `\upTeXguessedversion` を正式にサポート。
+      - `\Require(Native)upTeXAtLeast` を追加。
   * Version 2.1  〈2021/07/01〉 
       - 将来の版の pTeX に対応させる。
       - とある非公開機能を削除。
