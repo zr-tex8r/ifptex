@@ -104,6 +104,9 @@ Just the same as the ifptex package.
 Revision History
 ----------------
 
+  * Version 2.2a 〈2023/04/23〉 
+      - (experimental) Add `\ifstrictplatex` and `\ifstrictupltex`,
+        along with `Require...` counterparts.
   * Version 2.2  〈2022/04/03〉 
       - Officialy support `\upTeXguessedversion`.
       - Add `\Require(Native)upTeXAtLeast`.

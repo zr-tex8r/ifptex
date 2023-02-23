@@ -97,6 +97,9 @@ LaTeX の場合：
 更新履歴
 --------
 
+  * Version 2.2a 〈2023/04/23〉 
+      - (試験的) `\ifstrictplatex` と `\ifstrictuplatex` を（対応する
+        `Require...` 命令とともに）追加。
   * Version 2.2  〈2022/04/03〉 
       - `\upTeXguessedversion` を正式にサポート。
       - `\Require(Native)upTeXAtLeast` を追加。
