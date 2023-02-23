@@ -316,6 +316,20 @@
 %%<+> \ifstrictptexng == \ifstrictpTeXng
 \global\bxip@csletcs{ifstrictptexng}{ifstrictpTeXng}
 
+%%<+> \ifstrictuplatex
+\global\bxip@false{ifstrictuplatex}
+\if t\bxip@latex \ifnativeuptex \ifstrictuptex
+  \global\bxip@true{ifstrictuplatex}
+\fi\fi\fi
+%%<+> \ifstrictplatex
+\global\bxip@false{ifstrictplatex}
+\if t\bxip@latex \ifnativeuptex\else \ifstrictuptex
+  \global\bxip@true{ifstrictplatex}
+\fi\fi\fi
+\if t\bxip@latex \ifstrictptex
+  \global\bxip@true{ifstrictplatex}
+\fi\fi
+
 %%<+> \RequirepTeX
 \bxip@protected\gdef\RequirepTeX{%
   \bxip@Require\ifpTeX{(u)pTeX}\fi}
@@ -337,6 +351,12 @@
 %%<+> \RequireStrictpTeXng
 \bxip@protected\gdef\RequireStrictpTeXng{%
   \bxip@Require\ifstrictpTeXng{pTeX-ng}\fi}
+%%<+> \RequireStrictpLaTeX
+\bxip@protected\gdef\RequireStrictpLaTeX{%
+  \bxip@Require\ifstrictplatex{pLaTeX}\fi}
+%%<+> \RequireStrictupLaTeX
+\bxip@protected\gdef\RequireStrictupLaTeX{%
+  \bxip@Require\ifstrictuplatex{upLaTeX}\fi}
 
 %%<+> \RequireupTeXAtLeast{<min_version>}
 \bxip@protected\gdef\RequireupTeXAtLeast#1{%
