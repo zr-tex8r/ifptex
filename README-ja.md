@@ -97,6 +97,8 @@ LaTeX の場合：
 更新履歴
 --------
 
+  * Version 2.2b 〈2023/04/25〉 
+      - (試験的) `\ifporuplatex` と `\RequirepOrupLaTeX` を追加。
   * Version 2.2a 〈2023/04/23〉 
       - (試験的) `\ifstrictplatex` と `\ifstrictuplatex` を（対応する
         `Require...` 命令とともに）追加。

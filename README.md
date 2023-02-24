@@ -104,6 +104,8 @@ Just the same as the ifptex package.
 Revision History
 ----------------
 
+  * Version 2.2b 〈2023/04/25〉 
+      - (experimental) Add `\ifporuplatex` and `\RequirepOrupLaTeX`.
   * Version 2.2a 〈2023/04/23〉 
       - (experimental) Add `\ifstrictplatex` and `\ifstrictupltex`,
         along with `Require...` counterparts.
