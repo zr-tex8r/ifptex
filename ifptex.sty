@@ -61,11 +61,14 @@
   \let\bxip@latex=f
   \long\def\bxip@input#1\ProvidesPackage#2[#3]{%
     \def\bxip@input\RequirePackage##1[##2]{\input ##1.sty\relax}%
+    \let\bxip@opt@input\bxip@input
     \immediate\write-1{Package: #2 #3}}
   \expandafter\bxip@input
 \else                          %<*LaTeX>
   \let\bxip@latex=t
   \let\bxip@input\relax
+  \def\bxip@opt@input\RequirePackage#1[#2]{%
+    \IfFileExists{#1.sty}{\RequirePackage{#1}[#2]}{}}
 \fi                            %</LaTeX>
 
 %% package declaration
@@ -75,7 +78,7 @@
 
 %% packages
 \ifx\newif\@undefined\else
-\bxip@input
+\bxip@opt@input
 \RequirePackage{iftex}[2013/04/04]% v0.2
 \fi
 
@@ -142,7 +145,7 @@
 
 %% \bxip@protected
 \let\bxip@protected\protected
-\ifx\directlua\@undefined\else
+\ifx\directlua\@undefined\else % NB. this defines globally
   \directlua{tex.enableprimitives('bxip@', {'protected'})}
 \fi
 \bxip@csletcs{bxip@protected}{bxip@protected}
@@ -329,6 +332,14 @@
 \if t\bxip@latex \ifstrictptex
   \global\bxip@true{ifstrictplatex}
 \fi\fi
+%%<+> \ifporuplatex
+\global\bxip@false{ifporuplatex}
+\ifstrictplatex
+  \global\bxip@true{ifporuplatex}
+\fi
+\ifstrictuplatex
+  \global\bxip@true{ifporuplatex}
+\fi
 
 %%<+> \RequirepTeX
 \bxip@protected\gdef\RequirepTeX{%
@@ -357,6 +368,9 @@
 %%<+> \RequireStrictupLaTeX
 \bxip@protected\gdef\RequireStrictupLaTeX{%
   \bxip@Require\ifstrictuplatex{upLaTeX}\fi}
+%%<+> \RequirepOrupLaTeX
+\bxip@protected\gdef\RequirepOrupLaTeX{%
+  \bxip@Require\ifporuplatex{((u)pLaTeX}\fi}
 
 %%<+> \RequireupTeXAtLeast{<min_version>}
 \bxip@protected\gdef\RequireupTeXAtLeast#1{%
@@ -405,6 +419,7 @@
 % clean up
 \let\bxip@latex\@undefined
 \let\bxip@input\@undefined
+\let\bxip@opt@input\@undefined
 \let\bxip@protected\@undefined
 \bxip@restore@codes
 \endinput
