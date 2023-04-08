@@ -386,6 +386,13 @@
   \else \bxip@err@required{upTeX in Unicode}%
   \fi}
 
+%%<+> \RequireStrictupLaTeXAtLeast{<min_version>}
+\bxip@protected\gdef\RequireStrictupLaTeXAtLeast#1{%
+  \ifstrictuplatex
+    \bxip@check@version\upTeXguessedversion{#1}{upTeX in Unicode}%
+  \else \bxip@err@required{upLaTeX}%
+  \fi}
+
 %--------------------------------------- deprecated stuffs
 
 %%<+>D \ifNativeupTeX == \ifnativeupTeX
