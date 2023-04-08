@@ -57,17 +57,17 @@ NB: Here “e-TeX-ness” is not considered.
   * `\ifptexng` (or `\ifpTeXng`) [if-token]  
     Whether the engine is pTeX-ng.
   * `\RequirepTeX`  
-    Issues an error if `\ifpTeX` fails.
+    Issues an error if `\ifptex` fails.
   * `\RequireStrictpTeX`  
-    Issues an error if `\ifstrictpTeX` fails.
+    Issues an error if `\ifstrictptex` fails.
   * `\RequireupTeX`  
-    Issues an error if `\ifupTeX` fails.
+    Issues an error if `\ifuptex` fails.
   * `\RequireStrictupTeX`  
-    Issues an error if `\ifstrictupTeX` fails.
+    Issues an error if `\ifstrictuptex` fails.
   * `\RequireNativeupTeX`  
-    Issues an error if `\ifnativeupTeX` fails.
+    Issues an error if `\ifnativeuptex` fails.
   * `\RequirepTeXng`  
-    Issues an error if `\ifpTeXng` fails.
+    Issues an error if `\ifptexng` fails.
   * `\upTeXguessedversion` [mathchardef-token]  
     The guessed value of upTeX version; given as a 100-folded integer.  
     NB. On version 1.23 or later, the value is correct.  
@@ -77,7 +77,27 @@ NB: Here “e-TeX-ness” is not considered.
     required value.
   * `\RequireNativeupTeXAtLeast{<required>}`  
     Issues an error either if `\upTeXguessedversion` is smaller than
-    the given required value or if `\ifnativeupTeX` fails.
+    the given required value or if `\ifnativeuptex` fails.
+
+The following functions are for testing whether pLaTeX and/or upLaTeX
+(in their prevailing meaning) is used. There upLaTeX is not regarded as
+a kind of pLaTeX.
+
+  * `\ifstrictplatex`  [if-token]  
+    Whether pLaTeX is used.
+  * `\ifstrictuplatex`  [if-token]  
+    Whether upLaTeX is used.
+  * `\ifporuplatex`  [if-token]  
+    Whether pLaTeX or upLaTeX is used.
+  * `\RequireStrictpLaTeX`  
+    Issues an error if `\ifstrictplatex` fails.
+  * `\RequireStrictupLaTeX`  
+    Issues an error if `\ifstrictuplatex` fails.
+  * `\RequirepOrupLaTeX`  
+    Issues an error if `\ifporuplatex` fails.
+  * `\RequireStrictupLaTeXAtLeast{<required>}`  
+    Issues an error either if `\upTeXguessedversion` is smaller than
+    the given required value or if `\ifstrictuplatex` fails.
 
 
 ifuptex Package ― Alias of ifptex
@@ -104,11 +124,13 @@ Just the same as the ifptex package.
 Revision History
 ----------------
 
-  * Version 2.2b 〈2023/04/25〉 
-      - (experimental) Add `\ifporuplatex` and `\RequirepOrupLaTeX`.
-  * Version 2.2a 〈2023/04/23〉 
-      - (experimental) Add `\ifstrictplatex` and `\ifstrictupltex`,
-        along with `Require...` counterparts.
+  * Version 2.2c 〈2023/04/08〉 
+      - Add `\RequireStrictupLaTeXAtLeast`.
+  * Version 2.2b 〈2023/02/25〉 
+      - Add `\ifporuplatex` and `\RequirepOrupLaTeX`.
+  * Version 2.2a 〈2023/02/23〉 
+      - Add `\ifstrictplatex` and `\ifstrictupltex`, along with their
+        `Require...` counterparts.
   * Version 2.2  〈2022/04/03〉 
       - Officialy support `\upTeXguessedversion`.
       - Add `\Require(Native)upTeXAtLeast`.

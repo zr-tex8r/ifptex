@@ -54,17 +54,17 @@ LaTeX の場合：
     pTeX-ng を使っているか。  
     ※一応 `\ifstrictptexng`（`\ifstrictpTeXng`）もある。
   * `\RequirepTeX`  
-    `\ifpTeX` 不成立の場合はエラーを出す。
+    `\ifptex` 不成立の場合はエラーを出す。
   * `\RequireStirctpTeX`  
-    `\ifstrictpTeX` 不成立の場合はエラーを出す。
+    `\ifstrictptex` 不成立の場合はエラーを出す。
   * `\RequireupTeX`  
-    `\ifupTeX` 不成立の場合はエラーを出す。
+    `\ifuptex` 不成立の場合はエラーを出す。
   * `\RequireStrictupTeX`  
-    `\ifstrictupTeX` 不成立の場合はエラーを出す。
+    `\ifstrictuptex` 不成立の場合はエラーを出す。
   * `\RequireNativeupTeX`  
-    `\ifnativeupTeX` 不成立の場合はエラーを出す。
+    `\ifnativeuptex` 不成立の場合はエラーを出す。
   * `\RequirepTeXng`  
-    `\ifpTeXng` 不成立の場合はエラーを出す。  
+    `\ifptexng` 不成立の場合はエラーを出す。  
     ※一応 `\RequireStrictpTeXng` もある。
   * `\upTeXguessedversion` ［mathchardef-トークン］  
     upTeX のバージョンの推測値（を百倍した整数値）。  
@@ -73,7 +73,28 @@ LaTeX の場合：
   * `\RequireupTeXAtLeast{<要求値>}`  
     `\upTeXguessedversion` の値が要求値より小さい場合はエラーを出す。
   * `\RequireNativeupTeXAtLeast{<要求値>}`  
-    `\upTeXguessedversion` の値が要求値より小さいまたは `\ifnativeupTeX`
+    `\upTeXguessedversion` の値が要求値より小さいまたは `\ifnativeuptex`
+    が不成立の場合はエラーを出す。
+
+以下に挙げる機能では（一般的な意味での）pLaTeX や upLaTeX が使われている
+かを判定する。ここでは upLaTeX は pLaTeX の一種とは見なされ**ない**。  
+※フォーマットが LaTeX でない場合は不成立となる。  
+※TeX エンジンが pTeX-ng である場合は不成立となる。  
+
+  * `\ifstrictplatex`［if-トークン］  
+    pLaTeX を使っているか。
+  * `\ifstrictuplatex`［if-トークン］  
+    upLaTeX を使っているか。
+  * `\ifporuplatex`［if-トークン］  
+    pLaTeX または upLaTeX を使っているか。
+  * \RequireStrictpLaTeX`
+    `\ifstrictplatex` 不成立の場合はエラーを出す。
+  * \RequireStrictupLaTeX`
+    `\ifstrictuplatex` 不成立の場合はエラーを出す。
+  * \RequirepOrupLaTeX`
+    `\ifporuplatex` 不成立の場合はエラーを出す。
+  * \RequireStrictupLaTeXAtLeast{<要求値>}`  
+    `\upTeXguessedversion` の値が要求値より小さいまたは `\ifstrictuplatex`
     が不成立の場合はエラーを出す。
 
 
@@ -97,9 +118,11 @@ LaTeX の場合：
 更新履歴
 --------
 
-  * Version 2.2b 〈2023/04/25〉 
-      - (試験的) `\ifporuplatex` と `\RequirepOrupLaTeX` を追加。
-  * Version 2.2a 〈2023/04/23〉 
+  * Version 2.2c 〈2023/04/08〉 
+      - `\RequireStrictupLaTeXAtLeast` を追加。
+  * Version 2.2b 〈2023/02/25〉 
+      - `\ifporuplatex` と `\RequirepOrupLaTeX` を追加。
+  * Version 2.2a 〈2023/02/23〉 
       - (試験的) `\ifstrictplatex` と `\ifstrictuplatex` を（対応する
         `Require...` 命令とともに）追加。
   * Version 2.2  〈2022/04/03〉 
